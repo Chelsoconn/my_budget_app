@@ -6,18 +6,18 @@ This project is a web application that includes a frontend and backend, each run
 
 Before setting up and running the project, ensure you have the following installed:
 
-Ruby (version X.X.X)
-PostgreSQL (version X.X)
-Node.js (version X.X.X) and npm (for http-server)
+Ruby 
+PostgreSQL 
+Node.js and npm 
 http-server (can be installed via npm)
-Bundler (for managing Ruby gems)
+Bundler 
 Any additional dependencies or frameworks that your project requires
 
 Installation
 Clone the Repository
 
-git clone
-cd 
+git clone https://github.com/Chelsoconn/my_budget_app
+
 
 Backend Setup
 Navigate to the backend directory:
