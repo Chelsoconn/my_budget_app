@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es5",                   // Compiles to ES5 for maximum browser compatibility
+    "module": "es6",                   // Uses ES6 module system
+    "strict": true,                    // Enables strict type checking
+    "esModuleInterop": true,           // Makes it easier to import CommonJS modules
+    "skipLibCheck": true,              // Skips type checking of declaration files
+    "forceConsistentCasingInFileNames": true, // Enforces case-sensitive imports
+    "outDir": "./dist",                // Output directory for compiled JS files
+    "rootDir": "./src",                // Source directory for TypeScript files
+    "sourceMap": true                  // Generates source maps for easier debugging in browsers
+  },
+  "include": ["src/**/*.ts"],           // Include all TypeScript files in the 'src' folder
+  "exclude": ["node_modules"]           // Exclude the node_modules folder
+}

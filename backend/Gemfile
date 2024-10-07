@@ -1,0 +1,15 @@
+source "https://rubygems.org"
+
+ruby '3.3.0'
+
+group :production do
+  gem "puma"
+end
+
+gem "sinatra"
+gem "sinatra-contrib"
+gem "erubis"
+gem "bcrypt", "~> 3.1.12"
+gem "pg"
+gem "rackup", "~> 2.1"
+gem 'sinatra-cross_origin'
