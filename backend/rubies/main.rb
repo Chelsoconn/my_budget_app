@@ -3,16 +3,16 @@ require "tilt/erubis"
 require "bcrypt"
 require "yaml"
 require_relative "database_persistence"
+require_relative "helpers"
 require 'sinatra/cross_origin'
-#require 'json'
-
-# set :public_folder, 'frontend' 
-# 
+ 
 before do
   response.headers['Access-Control-Allow-Origin'] = 'http://localhost:8080'
   response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
   response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+  response.headers['Access-Control-Allow-Credentials'] = 'true'
   @storage = DatabasePersistence.new(logger)
+  @helpers = Helper.new(logger)
 end
 
 configure do
@@ -24,57 +24,51 @@ end
 configure(:development) do 
   require "sinatra/reloader"
   enable :cross_origin
-  also_reload "database_persistence.rb"
+  also_reload "database_persistence.rb", "helpers.rb"
 end 
-
-
-
 
 options "*" do
   response.headers["Allow"] = "GET, POST, PUT, DELETE, OPTIONS"
   response.headers["Access-Control-Allow-Origin"] = "http://localhost:8080"
   response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
   response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
+  response.headers["Access-Control-Allow-Credentials"] = "true" 
   200
 end
-
 
 get '/' do
   content_type :json
   @storage.get_users().to_json
 end
 
+get '/users' do 
+  content_type :json
+  @storage.get_usernames().to_json
+end
+
 #I will access this in my FE JS to display messages in my html
 get '/session_data' do
   content_type :json
-  { message: session[:message], theme: session[:theme] }.to_json
+  session_data = nil
+  if session[:message]
+    session_data = session[:message]
+    session.delete(:message)  # Deletes the session message
+  end
+  { message: session_data || '' }.to_json
 end
 
 post '/signup' do 
   username = params[:username]
   password = params[:password_digest]
-  password_digest = BCrypt::Password.create(password)
-  @storage.add_user(username, password_digest)
-  redirect "http://localhost:8080"
+
+  if @helpers.correct_format_username(username) && @helpers.correct_format_password(password) && @helpers.unique_username(username) 
+    password_digest = BCrypt::Password.create(password)
+    @storage.add_user(username, password_digest)
+    session[:message] = "Welcome #{username}! You're ready to start budgeting!";
+    p session[:message]
+    {"message": "Welcome #{username}! You're ready to start budgeting!"}.to_json
+  else
+    {"message": "The Username or Password was not in the correct format"}.to_json
+  end
 end
 
-
-
-
-# post "/add_member" do
-#   logged_in?
-#   #create new member object to have access to Member methods
-#   member = Member.new(params[:name], params[:distinction])
-#   #ensures that member added has a unique and valid name 
-#   if @helper.not_unique_name(member.name)
-#     session[:message] = @helper.message("unique_name_error")
-#     redirect "/add_member"
-#   elsif @helper.invalid_name?(member)
-#     session[:message] = @helper.message("name_error")
-#     redirect "/add_member"
-#   end 
-#   #adds new member
-#   @storage.add_member(member)
-#   session[:message] = @helper.message("member_added")
-#   redirect "/main_page/page/1"
-# end 

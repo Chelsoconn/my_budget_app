@@ -1,5 +1,56 @@
-function errorMessage(username: string, password: string): string {
-  return 'wrong username/password'
+
+async function checkUserIsUnique() {
+  try {
+    let resp = await fetch('http://localhost:4567/users', {
+     method: 'GET',
+     credentials: 'include',
+     headers: {
+      'X-Requested-With': 'XMLHttpRequest', 
+    }
+    })
+    if (!resp.ok) {
+     throw new Error(`Error: ${resp.status} ${resp.statusText}`);
+    }
+    const data = await resp.json();
+    return data; 
+  } catch(error) {
+    return 'Error fetching users';
+  };
+}
+
+function postNewUser(formData: FormData) {
+  (document.getElementById('password_message') as HTMLElement).innerHTML = '';
+  (document.getElementById('user_message') as HTMLElement).innerHTML = '';
+  fetch('http://localhost:4567/signup', {
+    method: 'POST', 
+    credentials: 'include', 
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest', 
+    },
+    body: formData
+  })
+  .then(response => {
+    if (response.ok) {
+       return response.json()
+    } else {
+        throw new Error(`Error: ${response.status} ${response.statusText}`); 
+    }
+  })
+  .then(response => {
+  console.log(response.message) 
+  window.location.href = "/index.html";
+  // method
+  // waits for the new content to lead
+  // grabs the message div node
+  // adds the message to the node text content
+  })
+  .catch(error => {
+    console.error(`Error during the request: ${error.message}`);
+  });
+} 
+
+function usernameIsUnique(user: string[], username: string) {
+  return !user.includes(username)
 }
 
 function correctSignin(username: string, password: string): boolean {
@@ -17,43 +68,46 @@ function correctFormatPassword(password: string): boolean {
 }
 
 
-
 document.addEventListener('DOMContentLoaded', () => {
   let form = document.querySelector('form');
 
-  (form as HTMLElement).addEventListener('submit', event => {
+  (form as HTMLElement).addEventListener('submit', async event => {
     event.preventDefault();
 
     const formData = new FormData(form as HTMLFormElement);
     const username = formData.get('username') as string;
     const password = formData.get('password_digest') as string;
 
-    console.log('Username:', username);
-    console.log('Password:', password);
-
-    if (correctSignin(username, password)) {
-      let request = new XMLHttpRequest();
-      request.open('POST', 'http://localhost:4567/signup');
-
-      request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-      request.setRequestHeader('Access-Control-Allow-Origin', '*');
-
-      
-      request.addEventListener('load', () => {
-        console.log('success');
-      });
-      request.addEventListener('error', function() {
-        console.error(`Error during the request: 
-        Status: ${request.status}, 
-        Status Text: ${request.statusText}, 
-        Response: ${request.responseText}`);
-      });
-
-      request.send(formData);
+    console.log('Username:', username);   //delete this when done with this page
+    console.log('Password:', password);   //delete this when done with this page
+    let user = await checkUserIsUnique()
+    usernameIsUnique(user, username) 
+    if (correctSignin(username, password) && usernameIsUnique(user, username)) {
+      postNewUser(formData)
     } else {
-      (document.getElementById('message') as HTMLElement).innerHTML = errorMessage(username, password)
+      let user_message = ''
+      let password_message = ''
+      if (!correctFormatUsername(username)) {
+        (document.getElementById('username') as HTMLInputElement).value = '';
+        user_message += 'The username must between 6-50 characters and include at least one uppercase letter and can only consist of letters, numbers, and underscores (_).  '
+      }
+      if (!correctFormatPassword(password)) {
+        (document.getElementById('password_digest') as HTMLInputElement).value = '';
+        password_message += 'The password must between 6-50 characters and include at least one uppercase letter, one number, and one special character.  '
+      }
+      if (!usernameIsUnique(user, username)) {
+        (document.getElementById('username') as HTMLInputElement).value = '';
+        user_message += 'This username is already in use'
+      }
+      (document.getElementById('password_message') as HTMLElement).innerHTML = password_message;
+      (document.getElementById('user_message') as HTMLElement).innerHTML = user_message;
     }
-   
-  })
-
+  })  
 })
+
+
+
+
+
+
+

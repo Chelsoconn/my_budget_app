@@ -18,16 +18,25 @@ class DatabasePersistence
       tuple
     end
   end
+  
+  #get all usernames to check unique username during signup
+  def get_usernames() 
+    result = query("SELECT username FROM login")
+    result.map do |tuple|
+      tuple["username"]
+    end
+  end
 
-    #add users
-    def add_user(username, password)
-      sql = <<~SQL
-      INSERT INTO login
-      (username, password_digest)
-      VALUES ($1, $2);
-      SQL
-      query(sql, username, password)
-    end 
+  
+  #add users
+  def add_user(username, password)
+    sql = <<~SQL
+    INSERT INTO login
+    (username, password_digest)
+    VALUES ($1, $2);
+    SQL
+    query(sql, username, password)
+  end 
   
 
   

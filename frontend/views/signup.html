@@ -9,15 +9,17 @@
     <link rel="icon" type="image/x-icon" href="/assets/images/favicon.png" />
   </head>
   <body>
-    <div id="message"></div>
+   
 
     <form action="http://localhost:4567/signup" method="POST">
       <div>
-        <label for="username">Username:</label>
+        <div id="user_message" style="color: red; font-size: 12px;"></div>
+        <label for="username" >Username:</label>
         <input type="username" id="username" name="username" required>
       </div>
       <br>
       <div>
+        <div id="password_message" style="color: red; font-size: 12px;"></div>
         <label for="password_digest">Password:</label>
         <input type="password" id="password_digest" name="password_digest" required>
       </div>

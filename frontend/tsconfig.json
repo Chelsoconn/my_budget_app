@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",                   // Compiles to ES5 for maximum browser compatibility
+    "target": "ES2016",                   // Compiles to ES5 for maximum browser compatibility
     "module": "es6",                   // Uses ES6 module system
     "strict": true,                    // Enables strict type checking
     "esModuleInterop": true,           // Makes it easier to import CommonJS modules
