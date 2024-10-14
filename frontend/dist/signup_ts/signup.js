@@ -52,10 +52,6 @@ function postNewUser(formData) {
         .then(response => {
         console.log(response.message);
         window.location.href = "/index.html";
-        // method
-        // waits for the new content to lead
-        // grabs the message div node
-        // adds the message to the node text content
     })
         .catch(error => {
         console.error(`Error during the request: ${error.message}`);

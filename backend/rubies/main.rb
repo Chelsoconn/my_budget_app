@@ -41,6 +41,28 @@ get '/' do
   @storage.get_users().to_json
 end
 
+post '/' do
+  content_type :json
+  username = params[:username]
+  password = params[:password_digest]
+
+  @storage.get_users().select do |user| 
+    if user['username'] === username
+      if BCrypt::Password.new(user['password_digest']) == password
+        #return this session message in the dashboard html
+        session[:message] = "Welcome back #{username}!"
+        session[:user_id] = user['id']
+        return {message: 'successful login'}.to_json()
+      else 
+        session[:message] = "Incorrect password"
+        return {message: 'Incorrect password'}.to_json()
+      end
+    end
+  end
+  session[:message] = "Incorrect username/ password"
+  {message: 'Incorrect Username/ password'}.to_json
+end
+
 get '/users' do 
   content_type :json
   @storage.get_usernames().to_json

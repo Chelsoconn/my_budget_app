@@ -14,13 +14,14 @@
     
     <form action="/login" method="POST">
       <div>
+        <div id="login_error_message" style="color: red; font-size: 12px;"></div>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
       </div>
       <br>
       <div>
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" id="password_digest" name="password_digest" required>
       </div>
       <br>
       <div>

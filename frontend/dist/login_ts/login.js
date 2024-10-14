@@ -1,11 +1,24 @@
-"use strict";
-document.addEventListener('DOMContentLoaded', () => {
+import Helpers from '../common_ts/common.js';
+let helpers = new Helpers();
+document.addEventListener('submit', event => {
+    event.preventDefault();
+    let form = document.querySelector('form');
+    const formData = new FormData(form);
+    const username = formData.get('username').trim();
+    for (let [key, value] of formData.entries()) {
+        if (key === username) {
+            const trimmedValue = value.trim();
+            formData.delete(key);
+            formData.append(key, trimmedValue);
+        }
+    }
     fetch('http://localhost:4567/', {
-        method: 'GET',
+        method: 'POST',
         credentials: 'include',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
-        }
+        },
+        body: formData
     })
         .then(response => {
         if (!response.ok) {
@@ -14,7 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return response.json();
     })
         .then(data => {
-        console.log(data);
+        if (data.message === 'successful login') {
+            console.log('HERE I AM LETS REROUTE');
+            window.location.href = "/views/dashboard.html";
+        }
+        else {
+            helpers.sessionDataMessage("login_error_message");
+            document.getElementById('password_digest').value = '';
+        }
     })
         .catch(err => {
         console.error('An error occurred:', err);

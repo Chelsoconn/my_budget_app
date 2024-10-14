@@ -1,22 +1,6 @@
-"use strict";
+import Helpers from '../common_ts/common.js';
+let helpers = new Helpers();
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('http://localhost:4567/session_data', {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-        .then(response => {
-        return response.json();
-    })
-        .then(response => {
-        let mess = document.getElementById('message');
-        console.log(response.message);
-        mess.innerHTML = response.message;
-    })
-        .catch((err) => {
-        return `Error accessing session data: ${err}`;
-    });
+    helpers.sessionDataMessage('message');
 });
 //# sourceMappingURL=index.js.map
